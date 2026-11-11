@@ -44,6 +44,7 @@ class RegistrationServiceBasisPathTest {
         Section sec = sectionWith(42);
         RegResult r = service().addCourse(stu, sec, LAST_DAY_OF_CYCLE_2);
         assertEquals(RegResult.Status.ENROLLED, r.status());
+        assertEquals(500, r.enrollment().lateFee());
         assertEquals(43, sec.seatsTaken());
     }
 
@@ -72,6 +73,7 @@ class RegistrationServiceBasisPathTest {
         Section sec = sectionWith(42);
         RegResult r = service().addCourse(stu, sec, LAST_DAY_OF_CYCLE_2);
         assertEquals(RegResult.Status.ENROLLED, r.status());
+        assertEquals(500, r.enrollment().lateFee());
         assertEquals(43, sec.seatsTaken());
     }
 

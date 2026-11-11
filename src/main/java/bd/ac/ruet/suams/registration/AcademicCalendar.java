@@ -8,6 +8,9 @@ import java.time.temporal.ChronoUnit;
  * day of the semester, and registration is open in cycles 1 and 2.
  */
 public class AcademicCalendar {
+    /** Ordinance 11.5: Tk 500 for each cycle of late registration. */
+    public static final int LATE_FEE_TAKA = 500;
+
     private final LocalDate firstDay;
 
     public AcademicCalendar(LocalDate firstDay) {
@@ -27,8 +30,8 @@ public class AcademicCalendar {
         return cycle == 1 || cycle == 2;
     }
 
-    /** Late fee in taka. The fee rule is still open: issue #8. */
+    /** Late fee in taka (rule R1): nothing in cycle 1, Tk 500 in cycle 2. */
     public int lateFee(LocalDate date) {
-        return 0;
+        return cycleOf(date) == 2 ? LATE_FEE_TAKA : 0;
     }
 }
