@@ -1,0 +1,14 @@
+services:
+  suams:
+    image: node:22-alpine
+    working_dir: /app
+    command: ["node", "server.js"]
+    volumes:
+      - ./prototype:/app:ro
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:8080/health"]
+      interval: 2s
+      timeout: 2s
+      retries: 30

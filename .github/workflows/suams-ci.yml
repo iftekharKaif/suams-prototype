@@ -1,0 +1,54 @@
+name: suams-ci
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    tags: ['v*.*.*']
+  schedule:
+    - cron: '0 20 * * *'        # 20:00 UTC = 02:00 in Dhaka, nightly run
+
+jobs:
+  verify:                       # unit, black-box and basis-path tests with JaCoCo coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - run: mvn -B verify
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: jacoco-report
+          path: target/site/jacoco
+
+  e2e:                          # Playwright system tests on the full stack
+    needs: verify
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - run: docker compose up -d --wait
+      - run: npm install && npx playwright install --with-deps
+        working-directory: e2e
+      - run: npx playwright test
+        working-directory: e2e
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: playwright-report
+          path: e2e/playwright-report
+
+  release:                      # version tags only: publish the release notes
+    needs: e2e
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - run: gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --title "SUAMS $GITHUB_REF_NAME" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
