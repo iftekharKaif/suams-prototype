@@ -4,6 +4,8 @@ A small prototype for the CSE 3205 technical proposal on the Smart University Ac
 Management System (SUAMS). It holds the parts of the Course Registration and Examination
 Result module that the proposal tests, and runs the `suams-ci` pipeline from Part C.
 
+The Java project targets Java 25 (LTS). Use a Java 25 JDK to run its Maven build and tests.
+
 | Folder | What it holds |
 |---|---|
 | `src/main/java/.../registration` | `RegistrationService.addCourse`, `PrerequisiteChecker`, the registration calendar (rules R1, R2 and R4) |
